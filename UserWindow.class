@@ -1,0 +1,192 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+public class UserWindow extends JPanel implements ListSelectionListener {
+    private JList questions = null;
+    private DefaultListModel listModel = null;
+    private JButton newRound;
+    private static final String roundString = "New Round!";
+    private List questionsToAdd;
+    private JLabel letterLabel;
+    private String letter = " ";
+    public List<String> questionsAskedBefore;
+    JLabel label;
+    int count = 150;
+    Timer timer = null;
+
+    public UserWindow() {
+        if (this.listModel == null) {
+            this.listModel = new DefaultListModel();
+        }
+
+        this.questionsAskedBefore = new ArrayList();
+        this.setPreferredSize(new Dimension(800, 400));
+        this.setBackground(Color.GRAY);
+        if (this.questions == null) {
+            this.questions = new JList(this.listModel);
+        }
+
+        this.setPreferredSize(new Dimension(1400, 700));
+        this.setBackground(Color.pink);
+        this.questions.setVisibleRowCount(15);
+        this.questions.setSelectionMode(0);
+        this.questions.setSelectedIndex(0);
+        this.questions.addListSelectionListener(this);
+        JScrollPane listScrollPane = new JScrollPane(this.questions);
+        this.questions.setFont(new Font("Arial", 0, 25));
+        JPanel buttonPane = new JPanel();
+        listScrollPane.setBackground(Color.getHSBColor(2.0F, 3.0F, 1.0F));
+        JPanel letterPane = new JPanel();
+        letterPane.setBackground(Color.getHSBColor(2.0F, 3.0F, 1.0F));
+        this.letterLabel = new JLabel("Letter for this round:      " + this.letter);
+        letterPane.setBackground(Color.pink);
+        this.letterLabel.setFont(new Font("Arial", 0, 30));
+        letterPane.add(this.letterLabel);
+        listScrollPane.setFont(new Font("Arial", 0, 30));
+        this.newRound = new JButton("New Round!");
+        this.newRound.setActionCommand("New Round!");
+        this.newRound.setFont(new Font("Arial", 0, 30));
+        UserWindow.RoundListener roundListener = new UserWindow.RoundListener(this.newRound);
+        this.newRound.addActionListener(roundListener);
+        buttonPane.setBackground(Color.pink);
+        buttonPane.add(this.newRound);
+        buttonPane.setLayout(new BoxLayout(buttonPane, 2));
+        this.add(letterPane, "Center");
+        this.add(listScrollPane, "West");
+        this.add(buttonPane, "Center");
+        this.listModel.addElement("                                                                               ");
+        this.label = new JLabel("     000");
+        this.label.setFont(new Font("Arial", 0, 50));
+        this.setLayout(new GridBagLayout());
+        buttonPane.add(this.label);
+    }
+
+    public void valueChanged(ListSelectionEvent e) {
+    }
+
+    public static void createAndShowGUI() {
+        JFrame frame = new JFrame("Scattegories");
+        frame.setDefaultCloseOperation(3);
+        JComponent newContentPane = new UserWindow();
+        newContentPane.setOpaque(true);
+        frame.setContentPane(newContentPane);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    public static void playSound(boolean be) {
+        int[] notes;
+        if (be) {
+            notes = new int[]{65};
+        } else {
+            notes = new int[]{50, 47};
+        }
+
+        try {
+            Synthesizer synthesizer = MidiSystem.getSynthesizer();
+            synthesizer.open();
+            MidiChannel channel = synthesizer.getChannels()[4];
+            int[] var4 = notes;
+            int var5 = notes.length;
+
+            for(int var6 = 0; var6 < var5; ++var6) {
+                int note = var4[var6];
+                channel.noteOn(note, 400);
+
+                try {
+                    Thread.sleep(2000L);
+                } catch (InterruptedException var13) {
+                    break;
+                } finally {
+                    channel.noteOff(note);
+                }
+            }
+        } catch (MidiUnavailableException var15) {
+            var15.printStackTrace();
+        }
+
+    }
+
+    class RoundListener implements ActionListener, DocumentListener {
+        private JButton button;
+
+        public RoundListener(JButton button) {
+            this.button = button;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            UserWindow.this.count = 181;
+            if (UserWindow.this.timer == null) {
+                UserWindow.this.timer = new Timer(1000, new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        --UserWindow.this.count;
+                        if (UserWindow.this.count > -1) {
+                            UserWindow.this.label.setText("     " + Integer.toString(UserWindow.this.count));
+                            UserWindow.this.label.setFont(new Font("Arial", 0, 50));
+                        } else {
+                            ((Timer)((Timer)e.getSource())).stop();
+                            UserWindow.playSound(true);
+                        }
+
+                    }
+                });
+            }
+
+            QuestionsToAsk questionsToAsk = new QuestionsToAsk();
+            UserWindow.this.listModel.clear();
+            UserWindow.this.timer.restart();
+            UserWindow.this.questionsToAdd = questionsToAsk.generateQuestions(UserWindow.this.questionsAskedBefore);
+            UserWindow.this.listModel.addElement("                                                                               ");
+            Iterator var3 = UserWindow.this.questionsToAdd.iterator();
+
+            while(var3.hasNext()) {
+                Object a = var3.next();
+                UserWindow.this.listModel.addElement(a);
+                UserWindow.this.questionsAskedBefore.add(a.toString());
+            }
+
+            RandomLetter random = new RandomLetter();
+            UserWindow.this.letter = random.generateLetter();
+            UserWindow.this.letterLabel.setText("Letter for this round:   " + UserWindow.this.letter + "   ");
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+        }
+    }
+}
