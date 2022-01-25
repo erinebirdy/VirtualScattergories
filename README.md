@@ -1,5 +1,6 @@
 # VirtualScattergories
 Personal Project: March 2020
+
 Java, Swing GUI Java
 
  Desktop application version of the board game Scattergories.  Player is given a random letter, randomized categories, and a countdown timer(with an annoying buzzer) for each round.
