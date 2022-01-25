@@ -1,0 +1,23 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+
+public class RandomLetter {
+    public static final ArrayList<String> Letters = new ArrayList(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"));
+
+    public RandomLetter() {
+    }
+
+    public String generateLetter() {
+        String letter = "A";
+        Random random = new Random();
+        int index = random.nextInt(Letters.size());
+        letter = (String)Letters.get(index);
+        return letter;
+    }
+}
