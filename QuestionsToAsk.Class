@@ -1,0 +1,37 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class QuestionsToAsk {
+    public static List<String> questionsForAsking;
+    public static List<String> questionsThatHaveBeenAsked;
+
+    public QuestionsToAsk() {
+        questionsForAsking = new ArrayList();
+        questionsThatHaveBeenAsked = new ArrayList();
+    }
+
+    public List<String> generateQuestions(List<String> questionAskedBefore) {
+        questionsForAsking.clear();
+        Random random = new Random();
+        List<String> questionNumbers = new ArrayList();
+        QuestionBank questionBank = new QuestionBank();
+        int questionNumber = 1;
+
+        for(int var6 = 0; questionsForAsking.size() < 12; ++var6) {
+            int index = random.nextInt(QuestionBank.questions.size());
+            if (!questionNumbers.contains(String.valueOf(index)) && !questionAskedBefore.contains(String.valueOf(index))) {
+                questionsForAsking.add(questionNumber + ".  " + QuestionBank.questions.get(index + 1).toString());
+                questionNumbers.add(String.valueOf(index));
+                ++questionNumber;
+            }
+        }
+
+        return questionsForAsking;
+    }
+}
